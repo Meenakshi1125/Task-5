@@ -1,0 +1,54 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from textblob import TextBlob
+from wordcloud import WordCloud
+
+# 1. Simulate social media comments dataset
+data = {
+    'comment': [
+        "I love the new Galaxy S25! Best phone ever!",
+        "Battery life is terrible. Worst experience.",
+        "Camera quality is amazing, very impressed.",
+        "Too expensive for what it offers.",
+        "Customer service was helpful and kind.",
+        "Laggy and buggy, not worth the price.",
+        "Stylish design and super fast charging!",
+        "Returned mine. Not satisfied at all.",
+        "Better than expected. Happy with my purchase.",
+        "Overheats quickly. Needs improvement."
+    ]
+}
+
+df = pd.DataFrame(data)
+
+# 2. Sentiment analysis using TextBlob
+def get_sentiment(text):
+    analysis = TextBlob(text)
+    if analysis.sentiment.polarity > 0:
+        return 'Positive'
+    elif analysis.sentiment.polarity < 0:
+        return 'Negative'
+    else:
+        return 'Neutral'
+
+df['sentiment'] = df['comment'].apply(get_sentiment)
+
+# 3. Visualize sentiment distribution
+plt.figure(figsize=(6, 4))
+sns.countplot(data=df, x='sentiment', palette='coolwarm')
+plt.title('Sentiment Distribution')
+plt.xlabel('Sentiment')
+plt.ylabel('Number of Comments')
+plt.tight_layout()
+plt.show()
+
+# 4. Word Cloud for Positive Comments
+positive_text = ' '.join(df[df['sentiment'] == 'Positive']['comment'])
+wordcloud = WordCloud(width=800, height=400, background_color='white').generate(positive_text)
+
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis('off')
+plt.title('Word Cloud - Positive Comments')
+plt.show()
